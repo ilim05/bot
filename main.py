@@ -32,6 +32,9 @@ async def quiz_1(message: types.Message):
 
 @dp.callback_query_handler(lambda call: call.data == "button_call_1")
 async def quiz_2(call: types.CallbackQuery):
+    markup = InlineKeyboardMarkup
+    button_call_1 = InlineKeyboardButton("NEXT", callback_data='button_call_2')
+    markup.add(button_call_1)
     question = "Сколько золотых мячей выиграл Месси?"
     answers = [
         "7",
@@ -50,18 +53,49 @@ async def quiz_2(call: types.CallbackQuery):
         correct_option_id=0,
         explanation="IZI",
         open_period=10,
+        reply_markup=markup
     )
+
+
+@dp.callback_query_handler(lambda call: call.data == "button_call_2")
+async def quiz_3(call: types.CallbackQuery):
+    question = "Сколько букв в русском алфавите?"
+    answers = [
+        "36",
+        "33",
+        "27",
+        "29",
+        "32"
+    ]
+
+    await bot.send_poll(
+        chat_id=call.from_user.id,
+        question=question,
+        options=answers,
+        is_anonymous=False,
+        type='quiz',
+        correct_option_id=1,
+        explanation="IZI",
+        open_period=10,
+    )
+
 @dp.message_handler(commands=['mem'])
 async def sendphoto(msg):
         a = ['mems/mem1/mem1.jpg', 'mems/mem2/mem2.jpg', 'mems/mem3/mem3.jpg', 'mems/mem4/mem4.jpg', 'mems/mem5/mem5.jpg']
         photo = open(random.choice(a), 'rb')
         await bot.send_photo(chat_id=msg.from_user.id, photo=photo)
 
+
 @dp.message_handler()
 async def echo(message: types.Message):
     if message.text.isdigit() == True:
         b = int(message.text)
         await bot.send_message(message.chat.id, b*b)
+    elif message.reply_to_message == "!pin":
+        await bot.pin_chat_message(message.chat.id, message.message_id)
+    elif message.text.startswith("game"):
+        c = ['⚽', '🏀', '🎯', '🎰']
+        b = await bot.send_dice(message.chat.id, emoji=random.choice(c))
     else:
         await bot.send_message(message.from_user.id, message.text)
 
