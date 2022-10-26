@@ -3,6 +3,13 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import bot, dp
 import random
 from aiogram.dispatcher.filters import Text
+from keyboards.client_kb import start_markup
+from database.bot_db import sql_command_random
+
+async def start(message: types.Message):
+    await bot.send_message(message.from_user.id,
+                           f"Салам хозяин {message.from_user.first_name}!",
+                           reply_markup=start_markup)
 
 async def quiz_1(message: types.Message):
     markup = InlineKeyboardMarkup()
@@ -34,8 +41,15 @@ async def sendphoto(msg):
     photo = open(random.choice(a), 'rb')
     await bot.send_photo(chat_id=msg.from_user.id, photo=photo)
 
+async def get_random_user(message: types.Message):
+    await sql_command_random(message)
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(quiz_1, Text(equals='quiz', ignore_case=True))
     dp.register_message_handler(sendphoto, commands=['mem'])
     dp.register_message_handler(sendphoto, Text(equals='mem', ignore_case=True))
+    dp.register_message_handler(start, commands=['start'])
+    dp.register_message_handler(start, Text(equals='start', ignore_case=True))
+    dp.register_message_handler(sql_command_random, commands=['get'])
+    dp.register_message_handler(sql_command_random, Text(equals='get', ignore_case=True))
