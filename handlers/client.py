@@ -5,6 +5,7 @@ import random
 from aiogram.dispatcher.filters import Text
 from keyboards.client_kb import start_markup
 from database.bot_db import sql_command_random
+from parser.anime import parser
 
 async def start(message: types.Message):
     await bot.send_message(message.from_user.id,
@@ -44,6 +45,17 @@ async def sendphoto(msg):
 async def get_random_user(message: types.Message):
     await sql_command_random(message)
 
+async def parser_film(message: types.Message):
+    items = parser()
+    for item in items:
+        await message.answer(
+            f"{item['link']}\n\n"
+            f"{item['title']}\n"
+            f"#Y{item['year']}\n"
+            f"#{item['country']}\n"
+            f"#{item['genre']}\n"
+        )
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(quiz_1, commands=['quiz'])
     dp.register_message_handler(quiz_1, Text(equals='quiz', ignore_case=True))
@@ -53,3 +65,4 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start, Text(equals='start', ignore_case=True))
     dp.register_message_handler(sql_command_random, commands=['get'])
     dp.register_message_handler(sql_command_random, Text(equals='get', ignore_case=True))
+    dp.register_message_handler(parser_film, commands=['film'])
