@@ -9,4 +9,4 @@ COPY . /opt/services/bot/homework-geektech
 
 RUN pip install -r requirements.txt
 
-CMD["python", "/opt/services/bot/homework-geekrech/main.py"]
+CMD ["python", "/opt/services/bot/homework-geekrech/main.py"]
